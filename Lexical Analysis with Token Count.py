@@ -1,84 +1,59 @@
 import re
 
+code = input("Enter a statement:\n")
+
 keywords = {
-    "int", "float", "char", "double", "if", "else", "while",
-    "for", "return", "break", "continue", "void", "main",
-    "switch", "case", "default", "do", "struct", "typedef",
-    "const", "unsigned", "long", "short", "signed"
+    "if", "else", "while", "for", "int",
+    "float", "char", "return", "void"
 }
 
 operators = {
-    "+", "-", "*", "/", "%", "=", "==", "!=", "<", ">",
-    "<=", ">=", "&&", "||", "++", "--"
+    "+", "-", "*", "/", "=", "==",
+    "<", ">", "<=", ">=", "!="
 }
 
 delimiters = {
-    ";", ",", "(", ")", "{", "}", "[", "]"
+    "(", ")", "{", "}", ";", ","
 }
 
-special_symbols = {
-    "#", "@", "$", "&"
-}
-
-print("Enter C Program (Type END on a new line to finish):")
-
-code = ""
-
-while True:
-    line = input()
-    if line == "END":
-        break
-    code += line + "\n"
-
-print("\n------ C PROGRAM ------")
-print(code)
-
-token_pattern = r'''
-==|!=|<=|>=|\+\+|--|\|\||&&|
-[A-Za-z_][A-Za-z0-9_]*|
-\d+\.\d+|\d+|
-[+\-*/%=<>]|
-[;,(){}\[\]]|
-[#@$&]
-'''
-
-tokens = re.findall(token_pattern, code, re.VERBOSE)
+tokens = re.findall(r"[A-Za-z_]\w*|\d+|==|<=|>=|!=|[-+*/=(){};,<>]", code)
 
 keyword_count = 0
-identifier_count = 0
 operator_count = 0
 delimiter_count = 0
+identifier_count = 0
 constant_count = 0
-special_count = 0
+
+print("\nTOKEN\t\tTYPE")
 
 for token in tokens:
 
     if token in keywords:
         keyword_count += 1
+        token_type = "Keyword"
 
     elif token in operators:
         operator_count += 1
+        token_type = "Operator"
 
     elif token in delimiters:
         delimiter_count += 1
+        token_type = "Delimiter"
 
-    elif token in special_symbols:
-        special_count += 1
-
-    elif re.fullmatch(r'\d+\.\d+|\d+', token):
+    elif token.isdigit():
         constant_count += 1
+        token_type = "Constant"
 
-    elif re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', token):
+    else:
         identifier_count += 1
+        token_type = "Identifier"
 
-print("\n========== TOKEN COUNT ==========")
-print("+-------------------+-------+")
-print("| Token Type        | Count |")
-print("+-------------------+-------+")
-print(f"| Keywords          | {keyword_count:^5} |")
-print(f"| Identifiers       | {identifier_count:^5} |")
-print(f"| Operators         | {operator_count:^5} |")
-print(f"| Delimiters        | {delimiter_count:^5} |")
-print(f"| Constants         | {constant_count:^5} |")
-print(f"| Special Symbols   | {special_count:^5} |")
-print("+-------------------+-------+")
+    print(f"{token}\t\t{token_type}")
+
+print("\n--------- TOKEN COUNT ---------")
+print("Keywords   :", keyword_count)
+print("Identifiers:", identifier_count)
+print("Operators  :", operator_count)
+print("Delimiters :", delimiter_count)
+print("Constants  :", constant_count)
+print("Total Tokens:", len(tokens))
